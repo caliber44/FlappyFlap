@@ -7,6 +7,7 @@ TagManager:
   - ScrollingBackground
   - ScrollingBackgroundLayer
   - StartButton
+  - Audio
   layers:
   - Default
   - TransparentFX
