@@ -5,7 +5,7 @@ public class Game : MonoBehaviour
     private const float GAME_STARTING_SPEED = 0.025f;
     private const float PLAYER_STARTING_Y = 0.2f;
     private const float PLAYER_STARTING_X = -0.9f;
-    private const float PLAYER_UP_FORCE = 3f;
+    private const float PLAYER_UP_FORCE = 5f;
     private const float PLAYER_UP_MAXFORCE = 7f;
     private const float PLAYER_MAX_ROTATION = 65f;
     private const float PLAYER_ROTATION_SPEED = 7f;
@@ -57,6 +57,8 @@ public class Game : MonoBehaviour
         m_playersVelocity_Y = STARTING_GRAVITY;
 
         m_playerTransform.position = (Vector3.right * PLAYER_STARTING_X) + (Vector3.up * PLAYER_STARTING_Y);
+
+        m_playerTransform.rotation = Quaternion.identity;
 
     }
     public void GameOver()
