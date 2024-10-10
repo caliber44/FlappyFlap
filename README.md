@@ -2,6 +2,8 @@
 
 **FlappyFlap** is a simple Flappy Bird clone built in Unity, designed for beginner programmers. Most of the game logic is kept in one file, making it easier to understand without needing deep knowledge of object-oriented programming (OOP).
 
+You can play the game on [Itch.io](https://caliberuk.itch.io/flappyflap).
+
 ## Features
 - **Unity Version:** 2022.3
 - **Easy-to-read code:** Ideal for learning game development basics.
