@@ -4,12 +4,18 @@ using UnityEngine;
 public class Game : MonoBehaviour
 {
     // Constants for game parameters
-    private const float GAME_STARTING_SPEED = 0.025f; // The initial speed at which the game starts moving. A small value to ensure smooth acceleration.
+    private const float GAME_STARTING_SPEED = 0.1f; // The initial speed at which the game starts moving. A small value to ensure smooth acceleration.
+    private const float PIPE_SCROLL_SPEED = 1f; // The inital speed at which the pipes will be scrolling througt the game.
+    private const float PIPE_MIN_POSITION_X = -2f; // The left most position a pipe can scroll to before being reset to the pipe reset position. 
+    private const float PIPE_MIN_POSITION_Y = -0.85f; // The lowest vertical position a pipe can spawn after it resets.
+    private const float PIPE_MAX_POSITION_Y = 0.60f;// The highest vertical position a pipe can spawn after it resets.
+    private const float PIPE_RESET_POSITION_X = 4f; // Once the pipe reaches the min allowed x coord, the pipe will be reset to this x position.
+    private const float PIPE_PLAYER_REWARD_POSITION_X = -0.8f; // The x position a pipe must scroll to in order for the player to be rewarded with a point;
     private const float PLAYER_STARTING_Y = 0.1f; // The starting vertical (Y) position for the player. This helps position the player above the ground.
-    private const float PLAYER_STARTING_X = -0.9f; // The starting horizontal (X) position for the player. This helps position the player in the game world.
-    private const float PLAYER_IDLE_BOB_INTENSITIY = 0.3f; // The intensity of the player's idle bobbing motion when they are not moving. Affects how much they sway up and down.
+    private const float PLAYER_STARTING_X = -0.75f; // The starting horizontal (X) position for the player. This helps position the player in the game world.
+    private const float PLAYER_IDLE_BOB_INTENSITIY = 0.2f; // The intensity of the player's idle bobbing motion when they are not moving. Affects how much they sway up and down.
     private const float PLAYER_IDLE_BOB_SPEED = 4f; // The speed at which the player bobs up and down while idle. A higher value means faster bobbing.
-    private const float PLAYER_UP_FORCE = 5f; // The upward force applied when the player jumps. This value determines how high the player can jump.
+    private const float PLAYER_UP_FORCE = 4.3f; // The upward force applied when the player jumps. This value determines how high the player can jump.
     private const float PLAYER_UP_MAXFORCE = 7f; // The maximum upward force the player can apply. This helps limit the jump height to prevent excessive jumps.
     private const float PLAYER_MAX_UP_ROTATION = 29f; // The maximum rotation angle (in degrees) the player can tilt upwards. Helps create a natural jump arc.
     private const float PLAYER_MAX_DOWN_ROTATION = 90f; // The maximum rotation angle (in degrees) the player can tilt downwards. Helps create a natural landing arc.
@@ -17,19 +23,20 @@ public class Game : MonoBehaviour
     private const float PLAYER_POSITION_MAX_Y = 2.8f; // The maximum Y position the player can reach. This defines the upper limit of the player's movement.
     private const float PLAYER_ROTATION_UP_SPEED = 80f; // The speed at which the player rotates upwards during a jump. Affects how quickly they tilt upwards.
     private const float PLAYER_ROTATION_DOWN_SPEED = 9f; // The speed at which the player rotates downwards. Affects how quickly they tilt downwards upon landing.
-    private const float PLAYER_DOWN_ROTATION_VELOCITY_Y_THRESHOLD = -4f; // The threshold for downward rotation velocity. This helps manage the rotation effect when falling quickly.
-    private const float PLAYER_HURTBOX_RADIUS = 0.2f; // The radius of the player's hurtbox, which defines the area where the player can take damage. A small radius to ensure precision.
-    private const float PLAYER_GROUND_HIT_OFFSET = 0.65f; // The offset distance when the player collides with the ground. This prevents the player from getting stuck on the ground.
+    private const float PLAYER_DOWN_ROTATION_VELOCITY_Y_THRESHOLD = -4.3f; // The threshold for downward rotation velocity. This helps manage the rotation effect when falling quickly.
+    private const float PLAYER_HURTBOX_RADIUS = 0.05f; // The radius of the player's hurtbox, which defines the area where the player can take damage. A small radius to ensure precision.
+    private const float PLAYER_GROUND_HIT_OFFSET = 2.9f; // The offset distance when the player collides with the ground. This prevents the player from getting stuck on the ground.
     private const float PLAYER_ANIMATION_WAIT = 0.13f; // The wait time (in seconds) between player animations. Controls the timing of animation transitions.
     private const float BACKGROUND_STARTING_X = 0f; // The starting X position for the background. This helps position the background at the beginning of the game.
     private const float BACKGROUND_LAYER_SPEED_OFFSET = 0.3f; // The speed offset for scrolling background layers. This creates a parallax effect, making the game visually dynamic.
-    private const float CAMERA_SHAKE_TIME = 0.09f; // The duration (in seconds) of the camera shake effect. This adds excitement during certain events in the game.
+    private const float CAMERA_SHAKE_TIME = 0.1f; // The duration (in seconds) of the camera shake effect. This adds excitement during certain events in the game.
     private const float CAMERA_SHAKE_INTENSITIY = 0.2f; // The intensity of the camera shake effect. Affects how much the camera will move during the shake.
     private const float GRAVITY = -13f; // The force of gravity affecting the player. A negative value pulls the player down towards the ground.
     private const float STARTING_FORCE = 0f; // The initial force applied to the player. This can be used to set the starting momentum for the player.
     private const string PLAYER_TAG = "Player"; // A string tag used to identify the player object in the game. This helps in finding and referencing the player.
     private const string START_BUTTON_TAG = "StartButton"; // A string tag used to identify the start button in the game. Useful for interactions with the button.
     private const string BACKGROUND_TAG = "ScrollingBackground"; // A string tag used to identify the scrolling background. This helps manage background-related functionalities.
+    private const string PIPE_TAG = "Pipes"; // A string tag used to identify the parent of all the pipes.This helps in finding all the pipes that we will scroll.
     private const string BACKGROUND_LAYER_TAG = "ScrollingBackgroundLayer"; // A string tag used to identify scrolling background layers. Useful for organizing multiple layers in the background.
     private const string BACKGROUND_XPOS_SHADER_ID = "_Xpos"; // The shader ID for the X position of the background in the rendering process. Helps control the position of the background in shaders.
     private const string LAYER_NAME_HURT_PLAYER = "HurtLayer"; // The name of the layer where the player can be hurt. Helps organize collision layers for gameplay mechanics.
@@ -40,7 +47,12 @@ public class Game : MonoBehaviour
     private int m_ScrollingMaterialScrollSpeedID; // The ID for the property that controls the speed of the scrolling material. Used to update the material in the game.
     private float m_currentBackgroundPosX; // The current X position of the background in the game world. This is updated to create the scrolling effect.
     private float m_currentGameSpeed; // The current speed of the game. This can change based on gameplay events (like speed boosts).
+    private int m_playerScore; // the current score of the player just a single game loop.
+    private int m_playerHighScore; //the recorded hightscore this game session. It will be set if the current score is larger.
     private Transform m_playerTransform; // The Transform component of the player. This holds the position, rotation, and scale of the player in the game.
+    private Transform m_pipeParentTransform; // The transform of the pipe parent. Used for moving all the pipe children.
+    private Vector3[] m_pipeStartingPositions; //An array of vector3s, The position of all the pipes are stored so we can reset them once the game is restared.
+    private bool[] m_pipeRewards; //An array to hold if we collected a reward from a pipe that passed us by. The value is reset when the pipe is reset, meaning it just counts once.  
     private float m_playersVelocity_Y; // The current vertical velocity of the player. This affects how fast the player is moving up or down.
     private bool m_isPause = true; // A boolean variable that indicates if the game is currently paused. Useful for managing game states.
     private bool m_isWaitingForInput = true; // A boolean variable that indicates if the game is waiting for player input to start. Helps control game flow.
@@ -56,8 +68,35 @@ public class Game : MonoBehaviour
     }
     private void SetupGame()
     {
-        // Find and set up the start button
+        // Find and setup the start button
         m_startButton = GameObject.FindGameObjectWithTag(START_BUTTON_TAG);
+
+        //Find and setup the pipe parent transform
+        m_pipeParentTransform = GameObject.FindGameObjectWithTag(PIPE_TAG).transform;
+        //Create the array of vector3 positions to store the pipe staring positions in.
+        //The length of the array in the amount of children the pipe parent has
+        m_pipeStartingPositions = new Vector3[m_pipeParentTransform.childCount];
+        //An array that holds data about pipes that have had the reward collected or not for the player passing them.
+        m_pipeRewards = new bool[m_pipeParentTransform.childCount];
+
+        // Loop through each child (pipe) of the pipe parent transform.
+        // Store the current position of the pipe in an array, so we can loop through it at game reset and 
+        // Reset all the pipes back to their starting position.
+        Vector3 startingPipePosition;
+        for (int i = 0; i < m_pipeParentTransform.childCount; i++)
+        {
+            //stores the current position of the tranforms child at that index into the array.
+            startingPipePosition = m_pipeParentTransform.GetChild(i).position;
+            //Randomise the Y of the pipe by first setting a different y value in startingPipPosition vector3
+            //Range of random float is defined by consts
+            startingPipePosition.y = Random.Range(PIPE_MIN_POSITION_Y, PIPE_MAX_POSITION_Y);
+            //copy value of starting position.
+            m_pipeStartingPositions[i] = startingPipePosition;
+        }
+
+        //Players hightscore and score are set to zero
+        m_playerScore = 0;
+        m_playerHighScore = 0;
 
         // Set the layer mask for the hurt player layer
         m_hurtPlayerLayer = LayerMask.GetMask(LAYER_NAME_HURT_PLAYER);
@@ -70,6 +109,9 @@ public class Game : MonoBehaviour
         // Start the game, unpausing it after one frame of delay
         PauseGame(false, true);
 
+        // Play the start game sound
+        Audio.PlayClip(AudioClipID.START);
+
         // Hide the start button
         m_startButton.SetActive(false);
 
@@ -80,12 +122,37 @@ public class Game : MonoBehaviour
         m_playersVelocity_Y = STARTING_FORCE;
         m_playerTransform.position = (Vector3.right * PLAYER_STARTING_X) + (Vector3.up * PLAYER_STARTING_Y);
         m_playerTransform.rotation = Quaternion.identity; // Reset player rotation
+
+        // Reset Pipe Positions
+        for (int i = 0; i < m_pipeParentTransform.childCount; i++)
+        {
+            //gets the position stored in our pipe starting array and sets the position of the tranforms child at that index.
+            m_pipeParentTransform.GetChild(i).position = m_pipeStartingPositions[i];
+            //set the reward for each pipe to false, as we havent collected the reward yet.
+            m_pipeRewards[i] = false;
+        }
+        //Hide the highscore
+        ScoreTextUpdate.HideHighScore();
+        // Set the player score and UI score text to zero
+        m_playerScore = 0;
+        ScoreTextUpdate.SetScore(m_playerScore);
     }
     public void GameOver()
     {
         // Handle game over scenario, pausing the game
         PauseGame(true);
         m_startButton.SetActive(true); // Show the start button again
+        //Check to see if the highscore was beaten
+        if(m_playerScore > m_playerHighScore)
+        {
+            //set the highscore to the current score as its the new highest
+            m_playerHighScore = m_playerScore;
+            //plays the sound effect for beating the highscore
+            Audio.PlayClip(AudioClipID.HIGHSCORE);
+        }
+        //Hide the current score and show the highscore
+        ScoreTextUpdate.HideCurrentScore();
+        ScoreTextUpdate.ShowHighScore(m_playerHighScore);
     }
     public void PauseGame(bool value, bool delay = false)
     {
@@ -115,6 +182,8 @@ public class Game : MonoBehaviour
     {
         // Update player movement every frame
         UpdatePlayerMovement();
+        // Update the pipes
+        UpdatePipeMovement();
     }
     private void FixedUpdate()
     {
@@ -244,6 +313,57 @@ public class Game : MonoBehaviour
             Quaternion targetRotation = Quaternion.Euler(0, 0, Mathf.Clamp(m_playersVelocity_Y, -PLAYER_UP_MAXFORCE, 0) / PLAYER_UP_MAXFORCE * PLAYER_MAX_DOWN_ROTATION);
             m_playerTransform.rotation = Quaternion.Lerp(m_playerTransform.rotation, targetRotation, Time.deltaTime * PLAYER_ROTATION_DOWN_SPEED);
         }
+    }
+    private void UpdatePipeMovement()
+    {
+        // Exit the method if the game is paused
+        if (m_isPause || m_isWaitingForInput) return;
+
+        // Define the left direction vector to move the pipes to the left.
+        Vector3 left = Vector3.left;
+        Vector3 newPos; // Variable to hold the new position of each pipe.
+
+        // Loop through each child (pipe) of the pipe parent transform.
+        for (int i = 0; i < m_pipeParentTransform.childCount; i++)
+        {
+            // Calculate the new position for the current pipe by moving it left
+            // based on the defined scroll speed and the time since the last frame.
+            newPos = m_pipeParentTransform.GetChild(i).position + (left * (PIPE_SCROLL_SPEED * Time.deltaTime));
+
+            //Check if the pipe has moved far enough along the x coord to trigger the reward for the player
+            //and that the player hasnt collected it yet.
+            if(newPos.x <= PIPE_PLAYER_REWARD_POSITION_X && !m_pipeRewards[i]) 
+            {
+                //set that we have collected the reward from this pipe. 
+                m_pipeRewards[i] = true;
+                //finish rewarding the player
+                PlayerRewarded();
+            }
+
+            // Check if the new position is beyond the minimum allowed X position.
+            if (newPos.x <= PIPE_MIN_POSITION_X)
+            {
+                // If the pipe has moved past the minimum position, reset its position
+                // to the specified reset position, creating a looping effect.
+                newPos.x = PIPE_RESET_POSITION_X;
+                // Give the pipe a random height by setting the y value to a range between the values defined in the consts
+                newPos.y = Random.Range(PIPE_MIN_POSITION_Y, PIPE_MAX_POSITION_Y);
+                //the pipe has been reset, so make it available to have its reward collected again
+                m_pipeRewards[i] = false;
+            }
+
+            // Update the position of the current pipe to its new calculated position.
+            m_pipeParentTransform.GetChild(i).position = newPos;
+        }
+    }
+    private void PlayerRewarded()
+    {
+        //increase the players score by 1
+        m_playerScore++;
+        //play the sound effect for scoring a point
+        Audio.PlayClip(AudioClipID.POINT);
+        // Set the UI score text to zero
+        ScoreTextUpdate.SetScore(m_playerScore);
     }
     private void SetupBackground()
     {

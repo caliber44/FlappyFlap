@@ -3,7 +3,10 @@ using UnityEngine;
 public enum AudioClipID 
 {
     THUD = 0,
-    FLAP = 1
+    FLAP = 1,
+    POINT = 2,
+    HIGHSCORE = 3,
+    START
 }
 
 public class Audio : MonoBehaviour

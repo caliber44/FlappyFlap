@@ -8,6 +8,7 @@ TagManager:
   - ScrollingBackgroundLayer
   - StartButton
   - Audio
+  - Pipes
   layers:
   - Default
   - TransparentFX
