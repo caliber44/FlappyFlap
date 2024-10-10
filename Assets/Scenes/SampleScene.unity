@@ -2016,7 +2016,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 754e8ce92f971d94b9b40d905d3f14c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsDegugMode: 1
+  IsDegugMode: 0
 --- !u!1 &1539820431
 GameObject:
   m_ObjectHideFlags: 0
