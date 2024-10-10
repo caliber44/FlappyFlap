@@ -12,6 +12,7 @@
 1. Download or clone the repository.
 2. Open the project in Unity (2022.3 or newer).
 3. Explore and modify the game as you like.
+4. Game.cs is the starting point. (Assets/Scripts/Game.cs)
 
 ## License
 This project is free to download and use for any purpose.
