@@ -8,6 +8,11 @@
 - **Aseprite project files included:** Feel free to modify and use them.
 - **Audio created with [sfxr](https://sfxr.me/):** Simple retro sound effects.
 
+## Screenshots
+![Screenshot 1](Assets/Screenshots/shot1.png)
+![Screenshot 2](Assets/Screenshots/shot2.png)
+![Screenshot 3](Assets/Screenshots/shot3.png)
+
 ## Getting Started
 1. Download or clone the repository.
 2. Open the project in Unity (2022.3 or newer).
@@ -16,4 +21,3 @@
 
 ## License
 This project is free to download and use for any purpose.
-
