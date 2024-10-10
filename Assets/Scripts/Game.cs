@@ -60,6 +60,9 @@ public class Game : MonoBehaviour
     private GameObject m_startButton; // Reference to the start button game object in the game. Used to manage interactions with the start button.
     private WaitForSecondsRealtime m_waitForSecondsRealtime; // The wait time for animation frames, allowing for smoother transitions between frames.
 
+    // Public variable to set a degub flag
+    public bool IsDegugMode = false; // Setting to TRUE stops the player checking for physics interactions that would end the game  
+
     void Start()
     {
         SetupGame(); // Initialize game settings
@@ -194,7 +197,7 @@ public class Game : MonoBehaviour
     private void PlayerHitDectection()
     {
         // Exit the method if the game is paused or waiting for player input
-        if (m_isPause || m_isWaitingForInput) return;
+        if (m_isPause || m_isWaitingForInput || IsDegugMode) return;
 
         // Check for collisions within a circular area around the player's position, offset by the player's upward velocity
         Collider2D hit = Physics2D.OverlapCircle(m_playerTransform.position + (Vector3.up * (m_playersVelocity_Y * Time.deltaTime)), PLAYER_HURTBOX_RADIUS, m_hurtPlayerLayer);

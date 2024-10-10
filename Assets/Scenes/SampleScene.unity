@@ -2016,6 +2016,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 754e8ce92f971d94b9b40d905d3f14c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsDegugMode: 1
 --- !u!1 &1539820431
 GameObject:
   m_ObjectHideFlags: 0
@@ -2042,7 +2043,7 @@ Transform:
   m_GameObject: {fileID: 1539820431}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -2.175, z: 0}
+  m_LocalPosition: {x: 0, y: -2.175, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2235,6 +2236,7 @@ MonoBehaviour:
   - {fileID: -2507448386084632533, guid: 111b2908da3f58c4ca5c10788709cdd1, type: 3}
   - {fileID: 6783163683431344336, guid: 111b2908da3f58c4ca5c10788709cdd1, type: 3}
   - {fileID: -1974773838420198829, guid: 111b2908da3f58c4ca5c10788709cdd1, type: 3}
+  - {fileID: -4376625642108945558, guid: 111b2908da3f58c4ca5c10788709cdd1, type: 3}
   - {fileID: -487337146088296121, guid: 111b2908da3f58c4ca5c10788709cdd1, type: 3}
   - {fileID: -4402521660502056890, guid: 111b2908da3f58c4ca5c10788709cdd1, type: 3}
   - {fileID: 6543994712081014204, guid: 111b2908da3f58c4ca5c10788709cdd1, type: 3}
