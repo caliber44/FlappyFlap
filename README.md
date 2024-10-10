@@ -9,9 +9,9 @@
 - **Audio created with [sfxr](https://sfxr.me/):** Simple retro sound effects.
 
 ## Screenshots
-![Screenshot 1](Assets/Screenshots/shot1.png)
-![Screenshot 2](Assets/Screenshots/shot2.png)
-![Screenshot 3](Assets/Screenshots/shot3.png)
+<img src="Assets/Screenshots/shot1.png" alt="Screenshot 1" width="80"/>
+<img src="Assets/Screenshots/shot2.png" alt="Screenshot 2" width="80"/>
+<img src="Assets/Screenshots/shot3.png" alt="Screenshot 3" width="80"/>
 
 ## Getting Started
 1. Download or clone the repository.
